@@ -1,0 +1,129 @@
+#+title: 通用矩阵乘法实现及优化
+#+auther: 张振楠
+* 实验报告
+** 报告说明
+   1. 在此程序中，矩阵被认为是一排线性储存的地址空间而非二维数组，以此减少二维数组二次寻址造成的开销（尚不清楚这是否有益于优化程序速度，毕竟一维数组指针寻址时需要经过一次乘法与一次加法）。调用者应有义务确保传入的指针有足够可访问的空间来存放矩阵元素。
+   2. 由于栈空间有限，考虑到大规模矩阵运算需要的空间，故程序中矩阵均采用malloc()函数动态分配空间。矩阵的创建者有应自行在合适的时机释放矩阵所占空间。
+** 目录结构：
+   - cmtx
+     - cmtx.h
+     - Makefile
+     - README.org
+     - record.org
+     - test_main.c
+
+*** cmtx.h
+    定义类型、函数与一些宏。算法在此文件中实现。
+    一些在下面所有算法中全部代码如下：
+    #+begin_src c
+      #ifndef CMTX_H
+      #define CMTX_H
+
+      typedef unsigned int order_t;
+      typedef int element_t;
+
+      #define ELEMENT_VALUE_MAX 255
+
+      // display a matrix
+      #define disp_mtx(name, mtx, m, n) {                 \
+              printf("the matrix %s: \n", name);          \
+              for (order_t i = 0; i < m; i++) {           \
+                  for (order_t j = 0; j < n; j++) {       \
+                      printf("%d ", *(mtx + i*n+j));      \
+                  }                                       \
+                  printf("\n");                           \
+              }                                           \
+          }
+
+      // get a random matrix
+      #define rand_mtx(mtx, m, n) {                           \
+              for (order_t i = 0; i < m*n; i++) {             \
+                  ,*(mtx+i) = rand() % ELEMENT_VALUE_MAX;      \
+              }                                               \
+          }
+      #endif
+    #+end_src
+*** test_main.c
+    主函数所在的文件，用于接受用户输入并构建两个随机矩阵，测量矩阵相乘的耗时。
+    
+    #+begin_src c
+      #include <stdio.h>
+      #include <stdlib.h>
+      #include <time.h>
+
+      #include "cmtx.h"
+
+      int main(int argc, char** argv) {
+          if (argc != 4) {
+              printf("error!\n"
+                     "please pass the order(512 to 2048) of matrixs.\n"
+                     "usage: ./test num1 num2 num3\n");
+              return -1;
+          }
+
+          // init two random matrixs and a matrix for result
+          order_t m = atoi(argv[1]);
+          order_t n = atoi(argv[2]);
+          order_t k = atoi(argv[3]);
+          element_t* mtx1 = malloc(sizeof(element_t)*m*n);
+          element_t* mtx2 = malloc(sizeof(element_t)*n*k);
+          element_t* mtx_r = malloc(sizeof(element_t)*m*k);
+          rand_mtx(mtx1, m, n);
+          rand_mtx(mtx2, n, k);
+
+          // Calculation and Timing
+          clock_t start = clock();
+          mtx_mul_general(mtx_r, mtx1, mtx2, m, n, k);
+          clock_t end = clock();
+          double total_time = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+          // output statistics
+          printf("total time used: %fs\n", total_time);
+
+          // free space
+          free(mtx1);
+          free(mtx2);
+          free(mtx_r);
+
+          return 0;
+      }
+    #+end_src
+*** Makefile
+    #+begin_src c
+      objects = test_main.o
+
+      test: test_main.o
+              cc -o test $(objects)
+
+      test_main.o: test_main.c cmtx.h
+
+      .PHONY: clean
+
+      clean:
+              rm -rf test $(objects)
+    #+end_src
+
+** 算法实现
+*** 迭代相乘累加
+    #+begin_src c
+      // general matrix multiplication
+      #define mtx_mul_general(mtx_r, mtx1, mtx2, m, n, k) {   \
+              for (order_t i = 0; i < m; i++) {               \
+                  for (order_t j = 0; j < n; j++) {           \
+                      for(order_t f = 0; f < k; f++) {                   \
+                          ,*(mtx_r + i*k+f) += *(mtx1 + i*n+j) * *(mtx2 + j*k+f); \
+                      }                                                       \
+                  }                                                           \
+              }                                                               \
+          }
+    #+end_src
+**** 优化思路
+     1. 依据c语言将数组线性存放的特点，调整循环时的数组访问顺序，尽量使重复次数较多的内层循环迭代行标，外层循环迭代列表。
+     2. 使用宏代替函数，减少函数调用造成的不必要开销。
+**** 实验结果
+     分别测试了512、1024、2048阶方阵计算耗时，最终结果为十次测试取平均。
+     | 矩阵阶数 | 消耗时间(s) |
+     |----------+-------------|
+     |      512 |    0.381315 |
+     |     1024 |    3.102790 |
+     |     2048 |   25.351474 |
