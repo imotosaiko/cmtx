@@ -12,7 +12,7 @@ typedef element_t* mtx_t;
    
 
 // display a matrix
-#define disp_mtx(name, mtx, m, n) {                 \
+#define disp_mtx(name, mtx, m, n) {                   \
         printf("the matrix %s: \n", name);          \
         for (order_t i = 0; i < m; i++) {           \
             for (order_t j = 0; j < n; j++) {       \
@@ -54,10 +54,10 @@ typedef element_t* mtx_t;
     }
 
 // Expand the matrix into a square matrix with the extra elements complemented by 0
-#define expand_mtx(mtx_r, mtx, m, n, expanded_order) {                    \
+#define expand_mtx(mtx_r, mtx, m, n, expanded_order) {                  \
         for (order_t i = 0; i < m; i++) {                               \
             for(order_t j = 0; j < n; j++) {                            \
-                *(mtx_r + i*expanded_order+j) = *(mtx + i*n+j);                       \
+                *(mtx_r + i*expanded_order+j) = *(mtx + i*n+j);         \
             }                                                           \
         }                                                               \
     }
@@ -73,10 +73,10 @@ typedef element_t* mtx_t;
         mtx_t expanded_mtx_r = new_mtx(expanded_order, expanded_order); \
         expand_mtx(expanded_mtx1, mtx1, m, n, expanded_order);          \
         expand_mtx(expanded_mtx2, mtx2, n, k, expanded_order);          \
-        int mtxs_size = 21;                                       \
-        mtx_t mtxs[mtxs_size];                              \
-        for (int i = 0; i < mtxs_size; i++) {                    \
-            mtxs[i] = new_mtx(expanded_order/2, expanded_order/2); \
+        int mtxs_size = 9;                                              \
+        mtx_t mtxs[mtxs_size];                                          \
+        for (int i = 0; i < mtxs_size; i++) {                           \
+            mtxs[i] = new_mtx(expanded_order/2, expanded_order/2);      \
         }                                                               \
         cw(expanded_mtx_r, expanded_mtx1, expanded_mtx2, expanded_order, mtxs); \
         for (order_t i = 0; i < m; i++) {                               \
@@ -84,8 +84,8 @@ typedef element_t* mtx_t;
                 *(mtx_r + i*k+j) = *(expanded_mtx_r + i*expanded_order+j); \
             }                                                           \
         }                                                               \
-        for (int i = 0; i < mtxs_size; i++) {                     \
-            free(mtxs[i]);                                         \
+        for (int i = 0; i < mtxs_size; i++) {                           \
+            free(mtxs[i]);                                              \
         }                                                               \
         free(expanded_mtx1);                                            \
         free(expanded_mtx2);                                            \
@@ -133,27 +133,40 @@ typedef element_t* mtx_t;
     }
 
 #define mtx_add(mtx_r, mtx1, mtx2, m, n) {                              \
-        for (order_t i = 0; i < m; i++) {                               \
-            for (order_t j = 0; j < n; j++) {                           \
-                *(mtx_r + i*n+j) = *(mtx1 + i*n+j) + *(mtx2 + i*n+j);   \
-            }                                                           \
+        mtx_t mtx_r_p = mtx_r;                                          \
+        mtx_t mtx_r_end = mtx_r + m*n;                                  \
+        mtx_t mtx1_p = mtx1;                                            \
+        mtx_t mtx2_p = mtx2;                                            \
+        while (mtx_r_p < mtx_r_end) {                                   \
+            *mtx_r_p = *mtx1_p + *mtx2_p;                               \
+            mtx_r_p++;                                                  \
+            mtx1_p++;                                                   \
+            mtx2_p++;                                                   \
         }                                                               \
     }
 
-#define mtx_sub(mtx_r, mtx1, mtx2, m, n) {      \
-        for (order_t i = 0; i < m; i++) {                               \
-            for (order_t j = 0; j < n; j++) {                           \
-                *(mtx_r + i*n+j) = *(mtx1 + i*n+j) - *(mtx2 + i*n+j);   \
-            }                                                           \
+#define mtx_sub(mtx_r, mtx1, mtx2, m, n) {                              \
+        mtx_t mtx_r_p = mtx_r;                                          \
+        mtx_t mtx_r_end = mtx_r + m*n;                                  \
+        mtx_t mtx1_p = mtx1;                                            \
+        mtx_t mtx2_p = mtx2;                                            \
+        while (mtx_r_p < mtx_r_end) {                                   \
+            *mtx_r_p = *mtx1_p - *mtx2_p;                               \
+            mtx_r_p++;                                                  \
+            mtx1_p++;                                                   \
+            mtx2_p++;                                                   \
         }                                                               \
     }
 
-#define mtx_cp(mtx_dist, mtx_src, m, n) {       \
-        for (order_t i = 0; i < m; i++) {       \
-            for (order_t j = 0; j < n; j++) {   \
-                *(mtx_dist + i*n+j) = *(mtx_src + i*n+j);       \
-            }                                   \
-        }                                       \
+#define mtx_cp(mtx_dist, mtx_src, m, n) {                       \
+        mtx_t mtx_dist_p = mrx_dist;                            \
+        mtx_t mtx_src_p = mtx_src;                              \
+        mtx_t mtx_dist_end = mtx_dist + m*n;                    \
+        while (mtx_dist_p < mtx_dist_end) {                     \
+            *mtx_dist_p = *mtx_src_p;                           \
+            mtx_dist_p++;                                       \
+            mtx_src_p++;                                        \
+        }                                                       \
     }
 
 // Coppersmith–Winograd algorihm, Accepts two square matrices of order 2 integer powers

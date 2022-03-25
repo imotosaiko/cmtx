@@ -8,9 +8,8 @@ void cw(mtx_t mtx_r, mtx_t mtx1, mtx_t mtx2, order_t n, mtx_t mtxs[]) {
         *mtx_r = *mtx1 * *mtx2;
         return;
     }
-
+    
     mtx_t spaces = malloc(sizeof(element_t)*n/2*n/2*13);
-    mtx_t ab = new_mtx(n/2*6, n/2);
     mtx_t a11 = &spaces[0];
     mtx_t a12 = &spaces[n/2*n/2];
     mtx_t a21 = mtxs[0];

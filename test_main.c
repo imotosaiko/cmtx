@@ -5,7 +5,7 @@
 #include "cmtx.h"
 
 // #define DEBUG
-#define REPEAT_TIMES 1
+#define REPEAT_TIMES 10
 
 int main(int argc, char** argv) {
     if (argc != 4) {
@@ -19,9 +19,9 @@ int main(int argc, char** argv) {
     order_t m = atoi(argv[1]);
     order_t n = atoi(argv[2]);
     order_t k = atoi(argv[3]);
-    element_t* mtx1 = new_mtx(m, n);
-    element_t* mtx2 = new_mtx(n, k);
-    element_t* mtx_r = new_mtx(m, k);
+    mtx_t mtx1 = new_mtx(m, n);
+    mtx_t mtx2 = new_mtx(n, k);
+    mtx_t mtx_r = new_mtx(m, k);
     rand_mtx(mtx1, m, n);
     rand_mtx(mtx2, n, k);
 
@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
         average_time += total_time / REPEAT_TIMES;
     }    
 
-    #ifdef DEBUG
+    #ifdef DEBUG    
     disp_mtx("mtx1", mtx1, m, n);
     disp_mtx("mtx2", mtx2, n, k);
     disp_mtx("mtx_r", mtx_r, m, k);
