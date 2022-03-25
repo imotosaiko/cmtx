@@ -4,7 +4,8 @@
 
 #include "cmtx.h"
 
-#define REPEAT_TIMES 10
+// #define DEBUG
+#define REPEAT_TIMES 1
 
 int main(int argc, char** argv) {
     if (argc != 4) {
@@ -18,9 +19,9 @@ int main(int argc, char** argv) {
     order_t m = atoi(argv[1]);
     order_t n = atoi(argv[2]);
     order_t k = atoi(argv[3]);
-    element_t* mtx1 = malloc(sizeof(element_t)*m*n);
-    element_t* mtx2 = malloc(sizeof(element_t)*n*k);
-    element_t* mtx_r = malloc(sizeof(element_t)*m*k);
+    element_t* mtx1 = new_mtx(m, n);
+    element_t* mtx2 = new_mtx(n, k);
+    element_t* mtx_r = new_mtx(m, k);
     rand_mtx(mtx1, m, n);
     rand_mtx(mtx2, n, k);
 
@@ -28,11 +29,20 @@ int main(int argc, char** argv) {
     double average_time;
     for (int i = 0; i < REPEAT_TIMES; i++) {
         clock_t start = clock();
-        mtx_mul_general(mtx_r, mtx1, mtx2, m, n, k);
+
+        // mtx_mul_general(mtx_r, mtx1, mtx2, m, n, k);
+        mtx_mul_cw(mtx_r, mtx1, mtx2, m, n, k);
+        
         clock_t end = clock();
         double total_time = ((double)(end - start)) / CLOCKS_PER_SEC;
         average_time += total_time / REPEAT_TIMES;
-    }
+    }    
+
+    #ifdef DEBUG
+    disp_mtx("mtx1", mtx1, m, n);
+    disp_mtx("mtx2", mtx2, n, k);
+    disp_mtx("mtx_r", mtx_r, m, k);
+    #endif
     
     // output statistics
     printf("average time used: %fs\n", average_time);
