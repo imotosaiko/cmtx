@@ -2,3 +2,5 @@ test
 *.a
 *.so
 *.o
+
+perf.data

@@ -4,8 +4,8 @@
 
 #include "cmtx.h"
 
-// #define DEBUG
-#define REPEAT_TIMES 10
+#define DEBUG
+#define REPEAT_TIMES 1
 
 int main(int argc, char** argv) {
     if (argc != 4) {
@@ -19,19 +19,19 @@ int main(int argc, char** argv) {
     order_t m = atoi(argv[1]);
     order_t n = atoi(argv[2]);
     order_t k = atoi(argv[3]);
-    mtx_t mtx1 = new_mtx(m, n);
-    mtx_t mtx2 = new_mtx(n, k);
-    mtx_t mtx_r = new_mtx(m, k);
-    rand_mtx(mtx1, m, n);
-    rand_mtx(mtx2, n, k);
+    matrix_t matrix1 = new_matrix(m * n);
+    matrix_t matrix2 = new_matrix(n * k);
+    matrix_t matrix_r = new_matrix(m * k);
+    rand_matrix(matrix1, m, n);
+    rand_matrix(matrix2, n, k);
 
     // Calculation and Timing
     double average_time;
     for (int i = 0; i < REPEAT_TIMES; i++) {
         clock_t start = clock();
 
-        // mtx_mul_general(mtx_r, mtx1, mtx2, m, n, k);
-        mtx_mul_cw(mtx_r, mtx1, mtx2, m, n, k);
+        // matrix_mul_general(matrix_r, matrix1, matrix2, m, n, k);
+        matrix_mul_cw(matrix_r, matrix1, matrix2, m, n, k);
         
         clock_t end = clock();
         double total_time = ((double)(end - start)) / CLOCKS_PER_SEC;
@@ -39,18 +39,18 @@ int main(int argc, char** argv) {
     }    
 
     #ifdef DEBUG    
-    disp_mtx("mtx1", mtx1, m, n);
-    disp_mtx("mtx2", mtx2, n, k);
-    disp_mtx("mtx_r", mtx_r, m, k);
+    disp_matrix("matrix1", matrix1, m, n);
+    disp_matrix("matrix2", matrix2, n, k);
+    disp_matrix("matrix_r", matrix_r, m, k);
     #endif
     
     // output statistics
     printf("average time used: %fs\n", average_time);
 
     // free space
-    free(mtx1);
-    free(mtx2);
-    free(mtx_r);
+    free(matrix1);
+    free(matrix2);
+    free(matrix_r);
 
     return 0;
 }
