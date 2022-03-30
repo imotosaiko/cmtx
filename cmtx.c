@@ -3,7 +3,7 @@
 
 #include "cmtx.h"
 
-void cw(matrix_t matrix_r, matrix_t matrix1, matrix_t matrix2, order_t n, matrix_t matrixs[]) {
+void cw(matrix_t matrix_r, matrix_t matrix1, matrix_t matrix2, order_t n, matrix_t matrixs) {
     if (n == 1) {
         *matrix_r = *matrix1 * *matrix2;
         return;
@@ -12,10 +12,10 @@ void cw(matrix_t matrix_r, matrix_t matrix1, matrix_t matrix2, order_t n, matrix
     matrix_t spaces = malloc(sizeof(element_t)*n/2*n/2*13);
     matrix_t a11 = &spaces[0];
     matrix_t a12 = &spaces[n/2*n/2];
-    matrix_t a21 = matrixs[0];
+    matrix_t a21 = matrixs;
     matrix_t a22 = &spaces[n/2*n/2*2];
     matrix_t b11 = &spaces[n/2*n/2*3];
-    matrix_t b12 = matrixs[1];
+    matrix_t b12 = matrixs + n/2 * n/2;
     matrix_t b21 = &spaces[n/2*n/2*4];
     matrix_t b22 = &spaces[n/2*n/2*5];
     
@@ -56,13 +56,13 @@ void cw(matrix_t matrix_r, matrix_t matrix1, matrix_t matrix2, order_t n, matrix
     cw(m6, s2, t2, n/2, matrixs);
     cw(m7, s3, t3, n/2, matrixs);    
 
-    matrix_t u1 = matrixs[2];
-    matrix_t u2 = matrixs[3];
-    matrix_t u3 = matrixs[4];
-    matrix_t u4 = matrixs[5];
-    matrix_t u5 = matrixs[6];
-    matrix_t u6 = matrixs[7];
-    matrix_t u7 = matrixs[8];
+    matrix_t u1 = matrixs + n/2 * n/2 * 2;
+    matrix_t u2 = matrixs + n/2 * n/2 * 3;
+    matrix_t u3 = matrixs + n/2 * n/2 * 4;
+    matrix_t u4 = matrixs + n/2 * n/2 * 5;
+    matrix_t u5 = matrixs + n/2 * n/2 * 6;
+    matrix_t u6 = matrixs + n/2 * n/2 * 7;
+    matrix_t u7 = matrixs + n/2 * n/2 * 8;
    
     matrix_add(u1, m1, m2, n/2, n/2);
     matrix_add(u2, m1, m6, n/2, n/2);

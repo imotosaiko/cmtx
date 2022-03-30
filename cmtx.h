@@ -84,10 +84,8 @@ typedef element_t* matrix_t;
         expand_matrix(expanded_matrix1, matrix1, m, n, expanded_order); \
         expand_matrix(expanded_matrix2, matrix2, n, k, expanded_order); \
         int matrixs_size = 9;                                           \
-        matrix_t matrixs[matrixs_size];                                 \
-        for (int i = 0; i < matrixs_size; i++) {                        \
-            matrixs[i] = new_matrix(expanded_order/2 * expanded_order/2);  \
-        }                                                               \
+        matrix_t matrixs = malloc(sizeof(element_t) *                   \
+                                  expanded_order/2 * expanded_order/2 * matrixs_size); \
         cw(expanded_matrix_r,                                           \
            expanded_matrix1, expanded_matrix2,                          \
            expanded_order, matrixs);                                    \
@@ -96,10 +94,8 @@ typedef element_t* matrix_t;
                 *(matrix_r + i*k+j) = *(expanded_matrix_r + i*expanded_order+j); \
             }                                                           \
         }                                                               \
-        for (int i = 0; i < matrixs_size; i++) {                        \
-            free(matrixs[i]);                                           \
-        }                                                               \
         free(expanded_matrixs);                                         \
+        free(matrixs);                                                  \
     }
 
 // Dividing a matrix equally into four pieces
@@ -180,6 +176,6 @@ typedef element_t* matrix_t;
 void cw(matrix_t matrix_r, \
         matrix_t matrix1, \
         matrix_t matrix2, \
-        order_t n, matrix_t matrixs[]);
+        order_t n, matrix_t matrixs);
 
 #endif
