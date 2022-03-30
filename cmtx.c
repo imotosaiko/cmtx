@@ -10,24 +10,24 @@ void cw(matrix_t matrix_r, matrix_t matrix1, matrix_t matrix2, order_t n, matrix
     }
 
     matrix_t a11 = matrixs;
-    matrix_t a12 = matrixs + n/2 * n/2;
-    matrix_t a21 = matrixs + n/2 * n/2 * 2;
-    matrix_t a22 = matrixs + n/2 * n/2 * 3;
+    matrix_t a12 = a11 + n/2 * n/2;
+    matrix_t a21 = a12 + n/2 * n/2;
+    matrix_t a22 = a21 + n/2 * n/2;
     part_matrix(matrix1, a11, a12, a21, a22, n);
     matrix_t b11 = matrix1;
-    matrix_t b12 = matrix1 + n/2 * n/2;
-    matrix_t b21 = matrix1 + n/2 * n/2 * 2;
-    matrix_t b22 = matrix1 + n/2 * n/2 * 3;
+    matrix_t b12 = b11 + n/2 * n/2;
+    matrix_t b21 = b12 + n/2 * n/2;
+    matrix_t b22 = b21 + n/2 * n/2;
     part_matrix(matrix2, b11, b12, b21, b22, n);
 
     matrix_t s1 = matrix2;
-    matrix_t s2 = matrix2 + n/2 * n/2;
-    matrix_t s3 = matrix2 + n/2 * n/2 * 2;
-    matrix_t s4 = matrix2 + n/2 * n/2 * 3;
-    matrix_t t1 = matrixs + n/2 * n/2 * 4;
+    matrix_t s2 = s1 + n/2 * n/2;
+    matrix_t s3 = s2 + n/2 * n/2;
+    matrix_t s4 = s3 + n/2 * n/2;
+    matrix_t t1 = a22 + n/2 * n/2;
     matrix_sub(t1, b12, b11, n/2, n/2);
-    matrix_t t2 = matrixs + n/2 * n/2 * 5;
-    matrix_t t3 = matrixs + n/2 * n/2 * 6;
+    matrix_t t2 = t1 + n/2 * n/2;
+    matrix_t t3 = t2 + n/2 * n/2;
     matrixs = t3 + n/2 * n/2;
     matrix_sub(t3, b22, b12, n/2, n/2);
     matrix_t t4 = b12;
