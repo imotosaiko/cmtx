@@ -8,61 +8,61 @@ void cw(matrix_t matrix_r, matrix_t matrix1, matrix_t matrix2, order_t n, matrix
         *matrix_r = *matrix1 * *matrix2;
         return;
     }
-    
-    matrix_t spaces = malloc(sizeof(element_t)*n/2*n/2*13);
-    matrix_t a11 = &spaces[0];
-    matrix_t a12 = &spaces[n/2*n/2];
-    matrix_t a21 = matrixs;
-    matrix_t a22 = &spaces[n/2*n/2*2];
-    matrix_t b11 = &spaces[n/2*n/2*3];
-    matrix_t b12 = matrixs + n/2 * n/2;
-    matrix_t b21 = &spaces[n/2*n/2*4];
-    matrix_t b22 = &spaces[n/2*n/2*5];
-    
+
+    matrix_t a11 = matrixs;
+    matrix_t a12 = matrixs + n/2 * n/2;
+    matrix_t a21 = matrixs + n/2 * n/2 * 2;
+    matrix_t a22 = matrixs + n/2 * n/2 * 3;
     part_matrix(matrix1, a11, a12, a21, a22, n);
+    matrix_t b11 = matrix1;
+    matrix_t b12 = matrix1 + n/2 * n/2;
+    matrix_t b21 = matrix1 + n/2 * n/2 * 2;
+    matrix_t b22 = matrix1 + n/2 * n/2 * 3;
     part_matrix(matrix2, b11, b12, b21, b22, n);
 
-    matrix_t s1 = &matrix1[0];
-    matrix_t s2 = &matrix1[n/2*n/2];
-    matrix_t s3 = &matrix1[n/2*n/2*2];
-    matrix_t s4 = &matrix1[n/2*n/2*3];
-    matrix_t t1 = &matrix2[0];
-    matrix_t t2 = &matrix2[n/2*n/2];
-    matrix_t t3 = &matrix2[n/2*n/2*2];
-    matrix_t t4 = &matrix2[n/2*n/2*3];
+    matrix_t s1 = matrix2;
+    matrix_t s2 = matrix2 + n/2 * n/2;
+    matrix_t s3 = matrix2 + n/2 * n/2 * 2;
+    matrix_t s4 = matrix2 + n/2 * n/2 * 3;
+    matrix_t t1 = matrixs + n/2 * n/2 * 4;
+    matrix_sub(t1, b12, b11, n/2, n/2);
+    matrix_t t2 = matrixs + n/2 * n/2 * 5;
+    matrix_t t3 = matrixs + n/2 * n/2 * 6;
+    matrixs = t3 + n/2 * n/2;
+    matrix_sub(t3, b22, b12, n/2, n/2);
+    matrix_t t4 = b12;
     
     matrix_add(s1, a21, a22, n/2, n/2);
     matrix_sub(s2, s1, a11, n/2, n/2);
     matrix_sub(s3, a11, a21, n/2, n/2);
     matrix_sub(s4, a12, s2, n/2, n/2);
-    matrix_sub(t1, b12, b11, n/2, n/2);
+
     matrix_sub(t2, b22, t1, n/2, n/2);
-    matrix_sub(t3, b22, b12, n/2, n/2);
+
     matrix_sub(t4, t2, b21, n/2, n/2);
 
-    matrix_t m1 = &spaces[n/2*n/2*6];
-    matrix_t m2 = &spaces[n/2*n/2*7];
-    matrix_t m3 = &spaces[n/2*n/2*8];
-    matrix_t m4 = &spaces[n/2*n/2*9];
-    matrix_t m5 = &spaces[n/2*n/2*10];
-    matrix_t m6 = &spaces[n/2*n/2*11];
-    matrix_t m7 = &spaces[n/2*n/2*12];
-
+    matrix_t m1 = a21;
     cw(m1, a11, b11, n/2, matrixs);
+    matrix_t m2 = a11;
     cw(m2, a12, b21, n/2, matrixs);
+    matrix_t m3 = a12;
     cw(m3, s4, b22, n/2, matrixs);
+    matrix_t m4 = s4;
     cw(m4, a22, t4, n/2, matrixs);
+    matrix_t m5 = a22;
     cw(m5, s1, t1, n/2, matrixs);
+    matrix_t m6 = s1;
     cw(m6, s2, t2, n/2, matrixs);
-    cw(m7, s3, t3, n/2, matrixs);    
+    matrix_t m7 = s2;
+    cw(m7, s3, t3, n/2, matrixs);
 
-    matrix_t u1 = matrixs + n/2 * n/2 * 2;
-    matrix_t u2 = matrixs + n/2 * n/2 * 3;
-    matrix_t u3 = matrixs + n/2 * n/2 * 4;
-    matrix_t u4 = matrixs + n/2 * n/2 * 5;
-    matrix_t u5 = matrixs + n/2 * n/2 * 6;
-    matrix_t u6 = matrixs + n/2 * n/2 * 7;
-    matrix_t u7 = matrixs + n/2 * n/2 * 8;
+    matrix_t u1 = b11;
+    matrix_t u2 = b12;
+    matrix_t u3 = b21;
+    matrix_t u4 = b22;
+    matrix_t u5 = s3;
+    matrix_t u6 = s4;
+    matrix_t u7 = t1;
    
     matrix_add(u1, m1, m2, n/2, n/2);
     matrix_add(u2, m1, m6, n/2, n/2);
@@ -78,6 +78,4 @@ void cw(matrix_t matrix_r, matrix_t matrix1, matrix_t matrix2, order_t n, matrix
     matrix_t c22 = u7;
 
     comb_matrix(matrix_r, c11, c12, c21, c22, n);
-
-    free(spaces);
 }

@@ -4,8 +4,8 @@
 
 #include "cmtx.h"
 
-#define DEBUG
-#define REPEAT_TIMES 1
+// #define DEBUG
+#define REPEAT_TIMES 10
 
 int main(int argc, char** argv) {
     if (argc != 4) {

@@ -84,10 +84,10 @@ typedef element_t* matrix_t;
         expand_matrix(expanded_matrix1, matrix1, m, n, expanded_order); \
         expand_matrix(expanded_matrix2, matrix2, n, k, expanded_order); \
         size_t matrixs_size = (32 * expanded_order * expanded_order / 4 - 32) / 3; \
-        matrix_t matrixs = malloc(sizeof(element_t) * matrixs_size);    \
+        matrix_t matrixs = malloc(sizeof(element_t) * matrixs_size); \
         cw(expanded_matrix_r,                                           \
            expanded_matrix1, expanded_matrix2,                          \
-           expanded_order, matrixs);                                    \
+           expanded_order, matrixs);                                  \
         for (order_t i = 0; i < m; i++) {                               \
             for (order_t j = 0; j < k; j++) {                           \
                 *(matrix_r + i*k+j) = *(expanded_matrix_r + i*expanded_order+j); \
