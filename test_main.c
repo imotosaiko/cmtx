@@ -19,11 +19,12 @@ int main(int argc, char** argv) {
     order_t m = atoi(argv[1]);
     order_t n = atoi(argv[2]);
     order_t k = atoi(argv[3]);
-    matrix_t matrix1 = new_matrix(m * n);
-    matrix_t matrix2 = new_matrix(n * k);
-    matrix_t matrix_r = new_matrix(m * k);
-    rand_matrix(matrix1, m, n);
-    rand_matrix(matrix2, n, k);
+    matrix_t matrixs = new_matrix((m*n + n*k + m*k));
+    matrix_t matrix1 = matrixs;
+    matrix_t matrix2 = matrixs + m*n;
+    matrix_t matrix_r = matrix2 + n*k;
+    rand_matrix(matrix1, m * n);
+    rand_matrix(matrix2, n * k);
 
     // Calculation and Timing
     double average_time;
@@ -48,9 +49,7 @@ int main(int argc, char** argv) {
     printf("average time used: %fs\n", average_time);
 
     // free space
-    free(matrix1);
-    free(matrix2);
-    free(matrix_r);
-
+    free(matrixs);
+    
     return 0;
 }

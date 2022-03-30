@@ -22,8 +22,8 @@ typedef element_t* matrix_t;
     }
 
 // get a random matrix
-#define rand_matrix(matrix, m, n) {                      \
-        for (order_t i = 0; i < m*n; i++) {              \
+#define rand_matrix(matrix, counts) {                      \
+        for (order_t i = 0; i < counts; i++) {              \
             *(matrix + i) = rand() % ELEMENT_VALUE_MAX;  \
         }                                                \
     }
@@ -58,7 +58,7 @@ typedef element_t* matrix_t;
     }
 
 // Expand the matrix into a square matrix with the extra elements complemented by 0
-#define expand_matrix(expanded_matrix, matrix,                             \
+#define expand_matrix(expanded_matrix, matrix,                          \
                       m, n, expanded_order) {                           \
         for (order_t i = 0; i < m; i++) {                               \
             for(order_t j = 0; j < n; j++) {                            \
@@ -68,21 +68,23 @@ typedef element_t* matrix_t;
     }
 
 // Accept any two matrices, multiply them with the Coppersmith–Winograd algorithm
-#define matrix_mul_cw(matrix_r, \
-                      matrix1, \
-                      matrix2, \
+#define matrix_mul_cw(matrix_r,                                         \
+                      matrix1,                                          \
+                      matrix2,                                          \
                       m, n, k) {                                        \
         int max_order = m > n ? m : n;                                  \
         max_order = max_order > k ? max_order : k;                      \
         int expanded_order;                                             \
         nearby_2_power(max_order, expanded_order);                      \
-        matrix_t expanded_matrix1 = new_matrix(expanded_order * expanded_order); \
-        matrix_t expanded_matrix2 = new_matrix(expanded_order * expanded_order); \
-        matrix_t expanded_matrix_r = new_matrix(expanded_order * expanded_order); \
+        matrix_t expanded_matrixs = malloc(sizeof(element_t) *          \
+                                           expanded_order * expanded_order * 3); \
+        matrix_t expanded_matrix1 = expanded_matrixs;                   \
+        matrix_t expanded_matrix2 = expanded_matrix1 + expanded_order * expanded_order; \
+        matrix_t expanded_matrix_r = expanded_matrix2 + expanded_order * expanded_order; \
         expand_matrix(expanded_matrix1, matrix1, m, n, expanded_order); \
         expand_matrix(expanded_matrix2, matrix2, n, k, expanded_order); \
         int matrixs_size = 9;                                           \
-        matrix_t matrixs[matrixs_size];                                       \
+        matrix_t matrixs[matrixs_size];                                 \
         for (int i = 0; i < matrixs_size; i++) {                        \
             matrixs[i] = new_matrix(expanded_order/2 * expanded_order/2);  \
         }                                                               \
@@ -97,9 +99,7 @@ typedef element_t* matrix_t;
         for (int i = 0; i < matrixs_size; i++) {                        \
             free(matrixs[i]);                                           \
         }                                                               \
-        free(expanded_matrix1);                                         \
-        free(expanded_matrix2);                                         \
-        free(expanded_matrix_r);                                        \
+        free(expanded_matrixs);                                         \
     }
 
 // Dividing a matrix equally into four pieces
