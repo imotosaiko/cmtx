@@ -1,5 +1,5 @@
 objects = test_main.o cmtx.o
-options = -O3 
+options = -O3
 
 test: test_main.o cmtx.o
 	cc -o test $(options) test_main.o cmtx.o
